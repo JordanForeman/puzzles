@@ -1,0 +1,17 @@
+{
+  "name": "js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+  },
+  "keywords": [],
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.18.2",
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
+}
