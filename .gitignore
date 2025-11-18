@@ -1,2 +1,6 @@
+# JavaScript Ignores
 */**/node_modules/
 */**/pnpm-lock.yaml
+
+# Rust Ignores
+*/**/rs/target/
