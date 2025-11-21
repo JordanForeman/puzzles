@@ -4,3 +4,10 @@
 
 # Rust Ignores
 */**/rs/target/
+
+# Java Ignores
+*/**/java/target/
+*/**/java/.settings/
+*/**/java/.project
+*/**/java/.classpath
+
