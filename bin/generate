@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Get the root directory of the repository
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+TEMPLATES_DIR="$ROOT_DIR/templates"
+
+# Get available templates
+AVAILABLE_TEMPLATES=($(ls -1 "$TEMPLATES_DIR" | sort))
+
+# Function to display available templates
+list_templates() {
+  echo "Available templates:"
+  for template in "${AVAILABLE_TEMPLATES[@]}"; do
+    echo "  - $template"
+  done
+}
+
+# Get language suffix from argument or prompt
+LANG_SUFFIX="$1"
+
+if [ -z "$LANG_SUFFIX" ]; then
+  list_templates
+  echo ""
+  read -p "Language suffix: " LANG_SUFFIX
+fi
+
+# Validate that the template exists
+if [ ! -d "$TEMPLATES_DIR/$LANG_SUFFIX" ]; then
+  echo "Error: Template '$LANG_SUFFIX' does not exist."
+  echo ""
+  list_templates
+  exit 1
+fi
+
+# Prompt for the path
+echo ""
+read -p "Path (e.g., dcp/nov-17-2025 or aoc/2024/1): " PUZZLE_PATH
+
+if [ -z "$PUZZLE_PATH" ]; then
+  echo "Error: Path cannot be empty."
+  exit 1
+fi
+
+# Prompt for optional description
+echo ""
+read -p "Description (optional, press Enter to skip): " DESCRIPTION
+
+# Create target directory
+TARGET_DIR="$ROOT_DIR/$PUZZLE_PATH"
+LANG_DIR="$TARGET_DIR/$LANG_SUFFIX"
+
+if [ -d "$LANG_DIR" ]; then
+  echo "Error: Directory '$LANG_DIR' already exists."
+  exit 1
+fi
+
+echo ""
+echo "Creating puzzle scaffold..."
+
+# Create the target directory if it doesn't exist
+mkdir -p "$TARGET_DIR"
+
+# Copy the template
+cp -r "$TEMPLATES_DIR/$LANG_SUFFIX" "$LANG_DIR"
+
+# Remove node_modules if it exists (for JS template)
+if [ -d "$LANG_DIR/node_modules" ]; then
+  rm -rf "$LANG_DIR/node_modules"
+fi
+
+# Create README.md if it doesn't exist
+README_PATH="$TARGET_DIR/README.md"
+if [ ! -f "$README_PATH" ]; then
+  echo "## Problem" > "$README_PATH"
+  echo "" >> "$README_PATH"
+  if [ -n "$DESCRIPTION" ]; then
+    echo "$DESCRIPTION" >> "$README_PATH"
+  fi
+  echo "" >> "$README_PATH"
+fi
+
+echo "✓ Created $LANG_DIR"
+echo "✓ Created $README_PATH"
+echo ""
+echo "Done! Your scaffold is ready."
+echo ""
+
+# Check if script is being sourced or executed
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+  # Being sourced - we can actually cd
+  cd "$LANG_DIR"
+  echo "Changed directory to:"
+  echo "  $(pwd)"
+else
+  # Being executed - suggest the cd command
+  echo "To get started, run:"
+  echo "  cd $LANG_DIR"
+fi
