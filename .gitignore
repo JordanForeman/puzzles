@@ -1,3 +1,5 @@
+.DS_Store
+
 # JavaScript Ignores
 */**/node_modules/
 */**/pnpm-lock.yaml
